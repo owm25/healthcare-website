@@ -1,20 +1,24 @@
+// Author(s): John McRea and Juan Martinez(Supervisor)
+// Cred: wbpreal@proton.me & jmartinez26@madisoncollege.edu
+// Currently Under Construction. Phase 1 of Honors Project Started Spring 2024
 // app.js
+// Setting up Express
 const express =
 require('express');
 const bodyParser =
 require('body-parser');
 const session =
 require('express-session');
-const bcrypt =
-require('bcrypt');
+const http = require('http');
 const https =
 require('https');
 const fs = require('fs');
 
 const app = express()
-const port = 3000;
+const httpPort = 3000
+const httpsPort = 3443;
 
-// Middleware
+// Middleware Setup
 app.use(bodyParser.urlencoded
 ({ extended: true }));
 app.use(session({
@@ -22,6 +26,8 @@ app.use(session({
     resave: false,
     saveUninitialized: true        
 }));
+
+// Middleware to redirect HTTP to HTTPS
 
 // Pretend PIN provided to patient
 const doctorPIN = '1234';
@@ -99,7 +105,7 @@ name="pin" required>
             <button
 type="submit">Register</button>
         </form>
-    `);m
+    `);
 });
 
 // Registration Handler
@@ -135,7 +141,7 @@ Dashboard</h2>
         res.redirect('/');
     }   
 });
-
+// HTTPS Module
 const httpsOptions = {
     key:
 fs.readFileSync('server.key'), 
@@ -143,8 +149,7 @@ fs.readFileSync('server.key'),
 fs.readFileSync('server.cert')    
 };
 
-https.createServer(httpsOptions, app).listen(3000, () => 
+https.createServer(httpsOptions, app).listen(3443, () => 
 {
-    console.log('Server running at https://127.0.0.1:3000');
+    console.log('Server running at https://127.0.0.1:3443');
 });
-
