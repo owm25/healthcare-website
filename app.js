@@ -7,6 +7,9 @@ const session =
 require('express-session');
 const bcrypt =
 require('bcrypt');
+const https =
+require('https');
+const fs = require('fs');
 
 const app = express()
 const port = 3000;
@@ -96,7 +99,7 @@ name="pin" required>
             <button
 type="submit">Register</button>
         </form>
-    `);
+    `);m
 });
 
 // Registration Handler
@@ -133,11 +136,15 @@ Dashboard</h2>
     }   
 });
 
-app.listen(port, () => {
-    console.log(`Server
-running at http://127.0.0.1:$
-{port}`);
+const httpsOptions = {
+    key:
+fs.readFileSync('server.key'), 
+    cert:
+fs.readFileSync('server.cert')    
+};
+
+https.createServer(httpsOptions, app).listen(3000, () => 
+{
+    console.log('Server running at https://127.0.0.1:3000');
 });
-// Need to generate a self-signed SSL certificate.
-// After SSL is generated. Configure Express to use the HTTPS module with my SSL certificate.
-// Add all necessary dependencies for HTTPS
+
