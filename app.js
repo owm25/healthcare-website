@@ -2,13 +2,15 @@
 // Cred: wbpreal@proton.me & jmartinez26@madisoncollege.edu
 // Currently Under Construction. Phase 1 of Honors Project Started Spring 2024
 // app.js
-// Setting up Express
+// Setting up Express and required modules
 const express =
 require('express');
 const bodyParser =
 require('body-parser');
 const session =
 require('express-session');
+const bcrypt =
+require('bcrypt');
 const http = require('http');
 const https =
 require('https');
@@ -38,11 +40,8 @@ const user = {};
 // Homepage with Login Portal
 app.get('/', (req, res) => {
     res.send(`
-        <h1>Welcome to Our
-Private Dental Office</h1>
-        <p>Our mission is to 
-        provide high quality dental
-        care with a personal touch.</p>
+        <h1>Welcome to Our Private Dental Office</h1>
+        <p>Our mission is to provide high quality dental care with a personal touch.</p>
         <h2>Login</h2>
         <form action="/login"
 method="post">        
@@ -59,9 +58,7 @@ name="password" required>
             <button
 type="submit">Login</button>
         </form>
-        <p>Don't have an
-account? <a href="/
-register">Register Here</a></p>
+        <p>Don't have an account? <a href="/register">Register Here</a></p>
     `);            
 });
 
@@ -69,9 +66,9 @@ register">Register Here</a></p>
 app.post('/login', (req, res) => {
     const { username,
 password } = req.body;
-    if (users[username] &&
+    if (user[username] &&
 bcrypt.compareSync(password,
-users[username].password)) {
+user[username].password)) {
 
 req.session.authenticated =
 true; 
@@ -109,22 +106,21 @@ type="submit">Register</button>
 });
 
 // Registration Handler
-app.post('/register', (req,
-res => {
+app.post('/register', (req, res) => {
     const { username,
 password, pin } = req.body;        
     if (pin === doctorPIN) {
         const hashedPassword
 = bcrypt.hashSync(password,
 10);        
-        users[username] =
+        user[username] =
 { password: hashedPassword };        
 
 res.send('Registration succesful. You can now <a href="/">login</a>.');
     } else {
         res.send('Incorrect PIN. Please try again.');
     }
-}));
+});
 
 //User Dashboard
 app.get('/dashboard', (req,
