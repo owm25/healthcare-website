@@ -15,10 +15,34 @@ const http = require('http');
 const https =
 require('https');
 const fs = require('fs');
+const mongoose =
+require('mongoose')
 
 const app = express()
-const httpPort = 3000
+const httpPort = 3000;
 const httpsPort = 3443;
+
+//Connect to MongoDB
+mongoose.connect('mongodb://127.0.0.1:27017/dentalOffice',
+{ useNewUrlParser: true,
+useUnifiedTopology: true});
+// User Account Types or Schema
+const userSchema = newmongoose.Schema({
+    username: String,
+    password: String,
+    firstName: String,
+    lastName: String,
+    dob: String,
+    address: String,
+    city: String,
+    state: String,
+    zip: String,
+    phone: String,
+    insurance: String,
+    accountType: String
+});
+
+const User = mongoose.model('User', userSchema);
 
 // Middleware Setup
 app.use(bodyParser.urlencoded
@@ -30,27 +54,45 @@ app.use(session({
     saveUninitialized: true        
 }));
 
-// Middleware to redirect HTTP to HTTPS
+// Redirect all HTTP requests to HTTPS
+app.use((req, res, next) => { 
 
-// Pretend PIN provided to patient
-const doctorPIN = '1234';
+    if (req.secure) {
+        next();
 
-// In-memory storage for registered users
-const user = {};
+    } else {
+        const redirectUrl = 'https://' 
++ req.headers.host.replace(`${httpPort}
+`, `${httpsPort}`) + req.url;
 
-// Homepage with Login Portal
+        res.redirect(redirectUrl); 
+    }
+});
+
+
+
+// Welcome Page with Login Form (creating a dropdown menu with more options)
 app.get('/', (req, res) => {
     res.send(`
         <h1>Welcome to Our Private Dental Office</h1>
+
         <p>Our mission is to provide high quality dental care with a personal touch.</p>
+
         <h2>Login</h2>
-        <form action="/login" method="post">        
+
+        <form action="/login" method="post">
+
             <label for="username">Username:</label>
+
             <input type="text" id="username" name="username" required>
+
             <label for="password">Password:</label>
+
             <input type="password" id="password" name="password" required>
+
             <buttontype="submit">Login</button>
         </form>
+        
         <p>Don't have an account? <a href="/register">Register Here</a></p>
     `);            
 });
@@ -154,10 +196,14 @@ fs.readFileSync('server.cert')
 
 };
 
-// Create our HTTPS server and configure to Listen on Port:3443
-https.createServer(httpsOptions, app).listen(3443, () =>
-
+// Create our HTTP for redirect and HTTPS server for secure connnection
+http.createServer(app).listen(httpPort, () =>
 {
-    console.log('Server running at https://127.0.0.1:3443');
+    console.log(`HTTP Server running on port ${httpPort}`);
+});
+
+https.createServer(httpsOptions, app).listen(httpsPort, () =>
+{
+    console.log(`HTTPS Server running at ${httpsPort}`);
     
 });
