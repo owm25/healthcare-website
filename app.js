@@ -1,5 +1,5 @@
-// Author(s): John McRea and Juan Martinez(Supervisor)
-// Cred: wbpreal@proton.me & jmartinez26@madisoncollege.edu
+// Author(s): John McRea
+// Cred: wbpreal@proton.me
 // Currently Under Construction. Phase 1 of Honors Project Started Spring 2024
 // app.js
 // Setting up Express and required modules
